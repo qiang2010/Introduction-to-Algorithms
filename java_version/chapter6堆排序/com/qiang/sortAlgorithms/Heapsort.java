@@ -1,4 +1,4 @@
-package com.qiang.heapsort;
+package com.qiang.sortAlgorithms;
 
 /*
  *  该类主要是实现堆排序
