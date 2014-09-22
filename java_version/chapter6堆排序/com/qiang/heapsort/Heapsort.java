@@ -57,12 +57,24 @@ public class Heapsort {
 	}
 	// 非递归调整
 	private int modify(int i){
-		return -1;
+		int pos = i;
+		int left , right ;
+		do{
+		  left = getLeft(pos);
+		  right = getRight(pos);
+		  int maxpos = pos;
+		   if(left < heapsize && heap[left] > heap[maxpos] ) maxpos = left;
+		  if(right< heapsize && heap[right] > heap[maxpos]) maxpos = right;
+		  if(maxpos == pos) return 0;
+		  exchange(pos, maxpos);
+	 	  pos = maxpos;
+		}while(true);
 	}
 	private void buildHeap(){
 		int lastIn = getLastInner();
 		for(int i = lastIn; i>=0; i--){
-			modifyRecursion(i);
+//			modifyRecursion(i);	// 递归调用形式
+			modify(i);  		// 非递归
 		}
 	}
 	public int heapsort(){
