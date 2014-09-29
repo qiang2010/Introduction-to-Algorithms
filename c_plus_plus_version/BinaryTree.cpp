@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <cstddef>
 using namespace std;
 
@@ -80,6 +81,7 @@ node * buildRecur(size_t preLoc1,size_t preLoc2,size_t inLoc1,size_t inLoc2){
   }
   int  leftLen = tempRootLoc - inLoc1 ;
   int  rightLen = inLoc2 - tempRootLoc ;
+  // 递归构建左右子树
   node * left = buildRecur(preLoc1+1,preLoc1+leftLen,inLoc1,inLoc1+leftLen-1);
   node * right = buildRecur(preLoc1+leftLen+1,preLoc2,tempRootLoc+1,inLoc2);
   node *root = &Tree[loc];
@@ -115,13 +117,40 @@ void postOrderRec(node * root){
 // ***** 非递归遍历*****
 // ***** 非递归先根遍历*****
 void preOrderNon(node * root){
-
+  stack<node*> nodeStack;// 非递归一般都要用到栈
+  node *temp = root;
+  while(temp != 0 || !nodeStack.empty()){
+    while(temp!=0){
+      cout<<(*temp).data<<" ";
+      nodeStack.push(temp);
+      temp = (*temp).left;
+    }
+    if(!nodeStack.empty()){
+      temp = nodeStack.top();
+      nodeStack.pop();
+      temp = (*temp).right;
+    }
+  }
 }
 // ***** 非递归中根遍历*****
+// 中根和先根的区别仅仅是输出数据的语句位置不同
 void inOrderNon(node * root){
-
+  stack<node*> nodeStack;// 非递归一般都要用到栈
+  node *temp = root;
+  while(temp != 0 || !nodeStack.empty()){
+    while(temp!=0){
+      nodeStack.push(temp);
+      temp = (*temp).left;
+    }
+    if(!nodeStack.empty()){
+      temp = nodeStack.top();
+      cout<<(*temp).data<<" "; // 位置不同
+      nodeStack.pop();
+      temp = (*temp).right;
+    }
+  }
 }
-// ***** 非递归先根遍历*****
+// ***** 非递归后根遍历*****
 void postOrderNon(node * root){
 
 }
@@ -166,14 +195,18 @@ void levelOrderPrint(node * root){
 int main(){
   //preOrderRec(buildBinaryTreeFromPreOrder());
   node * root =  buildBinaryTreeFromPreAndInOrder();
-  cout<<"loc:"<<loc<<endl;
-  cout<<"PreOrder: "<<endl;
+  cout<<"\nloc:"<<loc<<endl;
+  cout<<"\nPreOrder: "<<endl;
   preOrderRec(root);
-  cout<<"\n"<<"InOrder: "<<endl;
+  cout<<"\n\n非递归先根:"<<endl;
+  preOrderNon(root);
+  cout<<"\n\n"<<"InOrder: "<<endl;
   inOrderRec(root);
-  cout<<"\n"<<"PostOrder: "<<endl;
+  cout<<"\n\n非递归中根:"<<endl;
+  inOrderNon(root);
+  cout<<"\n\n"<<"PostOrder: "<<endl;
   postOrderRec(root);
-  cout<<"\n"<<"levelOrder:"<<endl;
+  cout<<"\n\n"<<"levelOrder:"<<endl;
   levelOrderPrint(root);
 
 }
