@@ -12,7 +12,6 @@ struct node{
     left = right = 0;
   }
 };
-
 // ++ 为了方便起见，不使用动态分配，而是使用静态内存分配
 // ++ 假定树中的节点数目小于 MAX_NUM
 node Tree[MAX_NUM];
@@ -65,11 +64,12 @@ node * buildBinaryTreeFromPreAndInOrder(){
   cin>>pre;
   cout<< "Please input inOrder:"<<endl;
   cin>>inOrder;
-  return buildRecur(0, pre.size(), 0 , inOrder.size());
+  return buildRecur(0, pre.size()-1, 0 , inOrder.size()-1);
 }
 // 递归通过先根 和 中根 构建二叉树
 node * buildRecur(size_t preLoc1,size_t preLoc2,size_t inLoc1,size_t inLoc2){
-  if (preLoc1>preLoc2 || inLoc1 > preLoc2 )  return NULL;
+  //cout<<"pos::"<< preLoc1<<" "<<preLoc2<<" "<<inLoc1<<" "<<inLoc2<<endl;
+  if (preLoc1>preLoc2 || inLoc1 > inLoc2 )  return 0;
   char  tempRoot = pre[preLoc1];
   size_t tempRootLoc = -1;
   for ( size_t i = inLoc1 ; i <= inLoc2; i ++){
@@ -110,22 +110,70 @@ void postOrderRec(node * root){
   if ( root == 0 ) return ;
   postOrderRec((*root).left);
   postOrderRec((*root).right);
-  cout<< (*root).data<<" |";
+  cout<< (*root).data<<" ";
 }
-// ***** 层次遍历输出二叉树*****
+// ***** 非递归遍历*****
+// ***** 非递归先根遍历*****
+void preOrderNon(node * root){
+
+}
+// ***** 非递归中根遍历*****
+void inOrderNon(node * root){
+
+}
+// ***** 非递归先根遍历*****
+void postOrderNon(node * root){
+
+}
+/* ***** 层次遍历输出二叉树*****
+ * 需要使用一个队列， 但是如何在遍历的过程记录每个节点的层次呢？
+ *  这里给出一种方法，使用两个变量：
+ *      ++ 一个记录当前层的节点数level，一个用于记录上一层的节点数目frontLevel
+ *      ++ 初始情况 level = 0, frontLeve = 1;
+ *      ++ 每次出队列，frontLeve就自减，每次往队列中添加元素的时候level自增，具体参考代码
+ *  同时可以使用一个变量来记录层次，当上面两个变量重置的时候 层次变量自增
+*/
 void levelOrderPrint(node * root){
-  queue<*node> que;
-  que.push_back(root);
+  queue< node* > que;
+  que.push(root);
+  node * temp;
+  int level = 0;
+  int frontLevel = 1;
+  int levelCount = 0;
+  while(!que.empty()){
+    temp = que.front();
+    que.pop();
+    cout<< "level:" << levelCount<<" ";
+    cout<< (*temp).data<<" ";
+    if((*temp).left  != 0 ){
+      que.push((*temp).left);
+      frontLevel > 0 ? level++ : 0;
+    }
+    if((*temp).right != 0 ){
+      que.push((*temp).right);
+      frontLevel >0?  level++ : 0;
+    }
+    frontLevel--;
+    if(frontLevel<=0){
+      frontLevel = level;
+      level = 0;
+      levelCount++;
+      cout<<endl;
+    }
+  }
 }
 
 int main(){
   //preOrderRec(buildBinaryTreeFromPreOrder());
   node * root =  buildBinaryTreeFromPreAndInOrder();
+  cout<<"loc:"<<loc<<endl;
   cout<<"PreOrder: "<<endl;
   preOrderRec(root);
   cout<<"\n"<<"InOrder: "<<endl;
   inOrderRec(root);
   cout<<"\n"<<"PostOrder: "<<endl;
   postOrderRec(root);
+  cout<<"\n"<<"levelOrder:"<<endl;
+  levelOrderPrint(root);
 
 }
